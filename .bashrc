@@ -89,6 +89,32 @@ function rmj() {
 }
 
 #
+# git branch
+#
+function parse_git_branch {
+    git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(* \1)/'
+}
+
+function xfill {
+    TERMWIDTH=${COLUMNS}
+    promptsize=$(echo -n "{yyyy-mm-dd HH:MM:ss}[$(pwd)] " | wc -c | tr -d " ")
+
+    branchsize=$(git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(* \1)/' | wc -c);
+
+    padding=8;
+    venv_padding=$(basename "$VIRTUAL_ENV" | wc -c)
+    fillsize=$((TERMWIDTH-promptsize-branchsize-padding-venv_padding))
+    fill=""
+    while [ "$fillsize" -gt "0" ]; do
+	fill="${fill}_"
+	fillsize=$((fillsize-1))
+    done
+    echo -n $fill
+}
+
+
+
+#
 # ergo prompt
 #
 function ep() {
